@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>皮卡丘可爱弹窗</title>
+    <!-- 引入图标库（确保加载稳定） -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <style>
+        /* 全局：皮卡丘黄粉渐变背景 */
+        body {
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(180deg, #fff9e6, #ffe0f0);
+            min-height: 100vh;
+            font-family: "Comic Sans MS", "幼圆", sans-serif;
+        }
+
+        /* 开场界面：修复皮卡丘图标显示 */
+        .opening-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #fff3cc, #ffdef5);
+            z-index: 99999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            overflow: hidden;
+        }
+        /* 换用闪电图标（皮卡丘标志性元素），确保显示 */
+        .pikachu-icon {
+            font-size: 90px;
+            color: #ffcc00; /* 皮卡丘黄色 */
+            text-shadow: 0 0 8px #000; /* 黑色阴影，还原皮卡丘闪电感 */
+            margin-bottom: 30px;
+            animation: float 3s ease-in-out infinite;
+        }
+        .opening-text {
+            font-size: 36px;
+            color: #ff69b4;
+            font-weight: 500;
+            transform: scale(0.95);
+            text-shadow: 0 0 15px rgba(255, 105, 180, 0.3), 
+                         0 2px 4px rgba(0,0,0,0.1);
+            animation: breath 2.5s infinite alternate;
+        }
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background-color: rgba(255, 204, 0, 0.2);
+            transform: scale(0);
+            animation: ripple 0.9s linear;
+        }
+
+        /* 弹窗样式（不变） */
+        .tip-window {
+            position: absolute;
+            width: 290px;
+            height: 90px;
+            border: 2px dashed #ffcc00;
+            border-radius: 20px;
+            box-shadow: 0 5px 18px rgba(255, 204, 0, 0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: #d63384;
+            z-index: 9999;
+            transition: opacity 0.4s ease, transform 0.3s ease;
+            opacity: 0;
+            transform: scale(0.9) translateY(10px);
+        }
+        .tip-window.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* 最终弹窗样式（不变） */
+        .final-window {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 320px;
+            height: 100px;
+            background-color: #fff3cc;
+            border: 3px solid #ffcc00;
+            border-radius: 24px;
+            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 19px;
+            font-weight: 500;
+            color: #e63946;
+            z-index: 10000;
+            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), 
+                        box-shadow 0.5s ease;
+        }
+        .final-window.show {
+            transform: translate(-50%, -50%) scale(1);
+            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.35);
+        }
+
+        /* 动画关键帧（不变） */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-15px); }
+            100% { transform: translateY(0px); }
+        }
+        @keyframes breath {
+            from { transform: scale(0.95); opacity: 0.9; }
+            to { transform: scale(1.05); opacity: 1; }
+        }
+        @keyframes ripple {
+            to {
+                transform: scale(25);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 开场界面：用闪电图标模拟皮卡丘，确保显示 -->
+    <div class="opening-screen" id="openingScreen">
+        <<i class="fa fa-bolt pikachu-icon" aria-hidden="true"></</i>
+        <div class="opening-text">今日份好运开启</div>
+    </div>
+
+    <script>
+        // 30句祝福列表（不变）
+        const tips = [
+            '多喝水哦~', '保持微笑呀', '每天都要元气满满',
+            '记得吃水果', '保持好心情', '好好爱自己', '我想你了',
+            '梦想成真', '期待下一次见面', '顺顺利利', '早点休息',
+            '愿所有烦恼都消失', '别熬夜', '今天过得开心嘛', '天冷了，多穿衣服',
+            '三餐四季，平安喜乐', '日子慢慢过，好运慢慢來',
+            '今天的风，也在为你加油呀', '累了就歇会儿，你已经很棒啦',
+            '小确幸会藏在每个平凡的瞬间', '愿你每天都有甜甜的小惊喜',
+            '照顾好自己，就是最好的礼物', '每一步都稳，每一刻都暖',
+            '烦恼会走，快乐会留', '今天也要对自己温柔一点',
+            '阳光正好，适合收集快乐', '愿你被世界温柔以待',
+            '小事顺心，大事顺意', '平安是福，健康是宝',
+            '今天的你，也在闪闪发光呀'
+        ];
+        // 弹窗背景色（不变）
+        const bgColors = [
+            '#fff0f5', '#fff9e6', '#f0fff4', '#f8f0ff',
+            '#fff8e7', '#f8f0ff', '#fff9e6', '#fff0e6', '#e6ffff',
+            '#ffe6f2', '#f0fff4', '#fff0f5', '#fff8e6'
+        ];
+
+        // 生成屏幕内随机位置（不变）
+        function getRandomPos() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const x = Math.max(15, Math.floor(Math.random() * (screenWidth - 300)));
+            const y = Math.max(15, Math.floor(Math.random() * (screenHeight - 100)));
+            return { x, y };
+        }
+
+        // 创建弹窗（不变）
+        function createTipWindow() {
+            const { x, y } = getRandomPos();
+            const tip = tips[Math.floor(Math.random() * tips.length)];
+            const bg = bgColors[Math.floor(Math.random() * bgColors.length)];
+
+            const window = document.createElement('div');
+            window.className = 'tip-window';
+            window.style.left = `${x}px`;
+            window.style.top = `${y}px`;
+            window.style.backgroundColor = bg;
+            window.textContent = tip;
+
+            document.body.appendChild(window);
+            setTimeout(() => {
+                window.classList.add('show');
+            }, 30);
+
+            return window;
+        }
+
+        // 加快弹窗关闭速度：delay从12ms改为5ms
+        function closeWindowsOneByOne(allWindows, index = 0, delay = 5) {
+            if (index < allWindows.length) {
+                const window = allWindows[index];
+                if (document.body.contains(window)) {
+                    window.style.opacity = 0;
+                    window.style.transform = 'scale(0.9) translateY(10px)';
+                    setTimeout(() => {
+                        document.body.removeChild(window);
+                    }, 300);
+                }
+                setTimeout(() => {
+                    closeWindowsOneByOne(allWindows, index + 1, delay);
+                }, delay);
+            } else {
+                createFinalWindow();
+            }
+        }
+
+        // 最终弹窗（不变）
+        function createFinalWindow() {
+            const finalWindow = document.createElement('div');
+            finalWindow.className = 'final-window';
+            finalWindow.textContent = '我想你了，还不给我发信息嘛～';
+            document.body.appendChild(finalWindow);
+            setTimeout(() => {
+                finalWindow.classList.add('show');
+            }, 100);
+        }
+
+        // 主逻辑（不变，保持慢节奏生成）
+        async function main() {
+            const allWindows = [];
+            const totalWindows = 200;
+            const initialDelay = 80; // 生成速度不变，慢节奏
+            const minDelay = 8;
+            const speedStep = 25;
+            const delayReduce = 1;
+
+            for (let i = 0; i < totalWindows; i++) {
+                const win = createTipWindow();
+                allWindows.push(win);
+                
+                const currentDelay = Math.max(
+                    initialDelay - Math.floor(i / speedStep) * delayReduce,
+                    minDelay
+                );
+                await awaitTimeout(currentDelay);
+            }
+
+            // 弹窗生成后等待3秒关闭（比之前缩短1秒，更快进入关闭阶段）
+            setTimeout(() => {
+                closeWindowsOneByOne(allWindows);
+            }, 3000);
+        }
+
+        // 延迟辅助函数（不变）
+        function awaitTimeout(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // 开场点击触发（不变）
+        const openingScreen = document.getElementById('openingScreen');
+        openingScreen.addEventListener('click', (e) => {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            const x = e.clientX - ripple.offsetWidth / 2;
+            const y = e.clientY - ripple.offsetHeight / 2;
+            ripple.style.left = `${x}px`;
+            ripple.style.top = `${y}px`;
+            openingScreen.appendChild(ripple);
+
+            openingScreen.style.opacity = 0;
+            setTimeout(() => {
+                openingScreen.remove();
+                main();
+            }, 600);
+        });
+    </script>
+</body>
+</html>
