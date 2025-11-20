@@ -3,267 +3,1160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>皮卡丘可爱弹窗</title>
-    <!-- 引入图标库（确保加载稳定） -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <title>法医白开水：腐败都市之谜</title>
     <style>
-        /* 全局：皮卡丘黄粉渐变背景 */
-        body {
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            background: linear-gradient(180deg, #fff9e6, #ffe0f0);
-            min-height: 100vh;
-            font-family: "Comic Sans MS", "幼圆", sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        /* 开场界面：修复皮卡丘图标显示 */
-        .opening-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(135deg, #fff3cc, #ffdef5);
-            z-index: 99999;
+        
+        body {
+            background-color: #1a1a2e;
+            color: #e6e6e6;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-image: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%231a1a2e"/><path d="M0 0L100 100M100 0L0 100" stroke="%23262645" stroke-width="1"/></svg>');
+        }
+        
+        .game-container {
+            background-color: #16213e;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            padding: 25px;
+            margin-top: 20px;
+            min-height: 500px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #e94560;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            border-bottom: 2px solid #0f3460;
+            padding-bottom: 10px;
+        }
+        
+        .scene-description {
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e94560;
+            line-height: 1.8;
+            min-height: 180px;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+        
+        .option-btn {
+            background-color: #1a1a2e;
+            color: #e6e6e6;
+            border: 2px solid #0f3460;
+            border-radius: 6px;
+            padding: 15px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3 ease;
+            font-size: 16px;
+        }
+        
+        .option-btn:hover {
+            background-color: #0f3460;
+            border-color: #e94560;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .option-btn:active {
+            transform: translateY(0);
+        }
+        
+        .game-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #0f3460;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .stat-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
+        }
+        
+        .stat-value {
+            font-weight: bold;
+            color: #e94560;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .ending-screen {
+            text-align: center;
+            padding: 30px;
+        }
+        
+        .ending-title {
+            color: #e94560;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        
+        .ending-description {
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+        
+        .restart-btn {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 25px;
             cursor: pointer;
-            transition: opacity 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
-            overflow: hidden;
-        }
-        /* 换用闪电图标（皮卡丘标志性元素），确保显示 */
-        .pikachu-icon {
-            font-size: 90px;
-            color: #ffcc00; /* 皮卡丘黄色 */
-            text-shadow: 0 0 8px #000; /* 黑色阴影，还原皮卡丘闪电感 */
-            margin-bottom: 30px;
-            animation: float 3s ease-in-out infinite;
-        }
-        .opening-text {
-            font-size: 36px;
-            color: #ff69b4;
-            font-weight: 500;
-            transform: scale(0.95);
-            text-shadow: 0 0 15px rgba(255, 105, 180, 0.3), 
-                         0 2px 4px rgba(0,0,0,0.1);
-            animation: breath 2.5s infinite alternate;
-        }
-        .ripple {
-            position: absolute;
-            border-radius: 50%;
-            background-color: rgba(255, 204, 0, 0.2);
-            transform: scale(0);
-            animation: ripple 0.9s linear;
-        }
-
-        /* 弹窗样式（不变） */
-        .tip-window {
-            position: absolute;
-            width: 290px;
-            height: 90px;
-            border: 2px dashed #ffcc00;
-            border-radius: 20px;
-            box-shadow: 0 5px 18px rgba(255, 204, 0, 0.15);
-            display: flex;
-            align-items: center;
-            justify-content: center;
             font-size: 16px;
-            color: #d63384;
-            z-index: 9999;
-            transition: opacity 0.4s ease, transform 0.3s ease;
-            opacity: 0;
-            transform: scale(0.9) translateY(10px);
+            margin-top: 20px;
+            transition: background-color 0.3;
         }
-        .tip-window.show {
-            opacity: 1;
-            transform: scale(1) translateY(0);
+        
+        .restart-btn:hover {
+            background-color: #c73e54;
         }
-
-        /* 最终弹窗样式（不变） */
-        .final-window {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            width: 320px;
-            height: 100px;
-            background-color: #fff3cc;
-            border: 3px solid #ffcc00;
-            border-radius: 24px;
-            box-shadow: 0 8px 25px rgba(255, 204, 0, 0.25);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 19px;
-            font-weight: 500;
-            color: #e63946;
-            z-index: 10000;
-            transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1), 
-                        box-shadow 0.5s ease;
+        
+        .intro-screen {
+            text-align: center;
+            padding: 30px;
         }
-        .final-window.show {
-            transform: translate(-50%, -50%) scale(1);
-            box-shadow: 0 10px 30px rgba(255, 204, 0, 0.35);
+        
+        .intro-title {
+            color: #e94560;
+            font-size: 32px;
+            margin-bottom: 20px;
         }
-
-        /* 动画关键帧（不变） */
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0px); }
+        
+        .intro-description {
+            background-color: #0f3460;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            line-height: 1.8;
         }
-        @keyframes breath {
-            from { transform: scale(0.95); opacity: 0.9; }
-            to { transform: scale(1.05); opacity: 1; }
+        
+        .start-btn {
+            background-color: #e94560;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 12px 25px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: background-color 0.3;
         }
-        @keyframes ripple {
-            to {
-                transform: scale(25);
-                opacity: 0;
-            }
+        
+        .start-btn:hover {
+            background-color: #c73e54;
+        }
+        
+        .achievement {
+            color: #ff9a3c;
+            font-style: italic;
+            margin-top: 10px;
+            font-size: 14px;
+            border-top: 1px solid #0f3460;
+            padding-top: 10px;
+        }
+        
+        .hint {
+            color: #4fc3f7;
+            font-size: 14px;
+            margin-top: 10px;
+            font-style: italic;
+        }
+        
+        .bad-ending {
+            color: #e94560;
+        }
+        
+        .good-ending {
+            color: #4fc3f7;
         }
     </style>
 </head>
 <body>
-    <!-- 开场界面：用闪电图标模拟皮卡丘，确保显示 -->
-    <div class="opening-screen" id="openingScreen">
-        <<i class="fa fa-bolt pikachu-icon" aria-hidden="true"></</i>
-        <div class="opening-text">今日份好运开启</div>
+    <h1>法医白开水：腐败都市之谜</h1>
+    
+    <div class="game-stats">
+        <div class="stat-item">
+            <div>证据收集</div>
+            <div class="stat-value" id="evidence-count">0/7</div>
+        </div>
+        <div class="stat-item">
+            <div>腐败认知</div>
+            <div class="stat-value" id="corruption-awareness">0%</div>
+        </div>
+        <div class="stat-item">
+            <div>危险度</div>
+            <div class="stat-value" id="risk-level">低</div>
+        </div>
+    </div>
+    
+    <div class="game-container">
+        <div id="intro-container">
+            <div class="intro-screen">
+                <h2 class="intro-title">腐败都市之谜</h2>
+                <div class="intro-description">
+                    <p>你是法医白开水，在腐败横行的"暗影城"工作。这座城市表面光鲜，实则被腐败政客和犯罪集团控制。</p>
+                    <p>今天，你接到一具身份特殊的尸体——市议员约翰·多伊。初步检查显示死因是心脏病发作，但你的直觉告诉你事情没那么简单。</p>
+                    <p>在这个游戏中，你需要：</p>
+                    <ul style="text-align: left; margin: 15px 0;">
+                        <li>收集证据揭露腐败网络</li>
+                        <li>提高对腐败的认知</li>
+                        <li>通过高风险选择获得隐藏胜利</li>
+                        <li>在危险的环境中生存下来</li>
+                    </ul>
+                    <p>注意：安全的选择通常无法揭露真相，只有铤而走险才能获得胜利！</p>
+                </div>
+                <button class="start-btn" id="start-btn">开始调查</button>
+            </div>
+        </div>
+        
+        <div id="scene-container" class="hidden">
+            <div class="scene-description" id="scene-description">
+                <!-- 场景描述将由JavaScript动态填充 -->
+            </div>
+            <div class="options-container" id="options-container">
+                <!-- 选项按钮将由JavaScript动态生成 -->
+            </div>
+        </div>
+        
+        <div id="ending-container" class="hidden">
+            <div class="ending-screen">
+                <h2 class="ending-title" id="ending-title">游戏结束</h2>
+                <div class="ending-description" id="ending-description">
+                    <!-- 结局描述将由JavaScript动态填充 -->
+                </div>
+                <button class="restart-btn" id="restart-btn">重新开始</button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // 30句祝福列表（不变）
-        const tips = [
-            '多喝水哦~', '保持微笑呀', '每天都要元气满满',
-            '记得吃水果', '保持好心情', '好好爱自己', '我想你了',
-            '梦想成真', '期待下一次见面', '顺顺利利', '早点休息',
-            '愿所有烦恼都消失', '别熬夜', '今天过得开心嘛', '天冷了，多穿衣服',
-            '三餐四季，平安喜乐', '日子慢慢过，好运慢慢來',
-            '今天的风，也在为你加油呀', '累了就歇会儿，你已经很棒啦',
-            '小确幸会藏在每个平凡的瞬间', '愿你每天都有甜甜的小惊喜',
-            '照顾好自己，就是最好的礼物', '每一步都稳，每一刻都暖',
-            '烦恼会走，快乐会留', '今天也要对自己温柔一点',
-            '阳光正好，适合收集快乐', '愿你被世界温柔以待',
-            '小事顺心，大事顺意', '平安是福，健康是宝',
-            '今天的你，也在闪闪发光呀'
-        ];
-        // 弹窗背景色（不变）
-        const bgColors = [
-            '#fff0f5', '#fff9e6', '#f0fff4', '#f8f0ff',
-            '#fff8e7', '#f8f0ff', '#fff9e6', '#fff0e6', '#e6ffff',
-            '#ffe6f2', '#f0fff4', '#fff0f5', '#fff8e6'
-        ];
+        // 游戏状态
+        const gameState = {
+            currentScene: "start",
+            evidenceCollected: 0,
+            corruptionAwareness: 0,
+            riskLevel: 0,
+            choices: [],
+            hasHiddenEvidence: false,
+            hasMetInformant: false,
+            hasBetrayedPolice: false,
+            hasCorruptionProof: false,
+            allies: [],
+            enemies: [],
+            moralChoices: 0,
+            reputation: 50,
+            hasMetWhistleblower: false,
+            hasFinancialEvidence: false,
+            hasWitnessProtection: false,
+            hasPoliticalSupport: false,
+            hasMediaAllies: false,
+            hasLegalBackup: false,
+            hasTrustedAgent: false
+        };
 
-        // 生成屏幕内随机位置（不变）
-        function getRandomPos() {
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
-            const x = Math.max(15, Math.floor(Math.random() * (screenWidth - 300)));
-            const y = Math.max(15, Math.floor(Math.random() * (screenHeight - 100)));
-            return { x, y };
-        }
-
-        // 创建弹窗（不变）
-        function createTipWindow() {
-            const { x, y } = getRandomPos();
-            const tip = tips[Math.floor(Math.random() * tips.length)];
-            const bg = bgColors[Math.floor(Math.random() * bgColors.length)];
-
-            const window = document.createElement('div');
-            window.className = 'tip-window';
-            window.style.left = `${x}px`;
-            window.style.top = `${y}px`;
-            window.style.backgroundColor = bg;
-            window.textContent = tip;
-
-            document.body.appendChild(window);
-            setTimeout(() => {
-                window.classList.add('show');
-            }, 30);
-
-            return window;
-        }
-
-        // 加快弹窗关闭速度：delay从12ms改为5ms
-        function closeWindowsOneByOne(allWindows, index = 0, delay = 5) {
-            if (index < allWindows.length) {
-                const window = allWindows[index];
-                if (document.body.contains(window)) {
-                    window.style.opacity = 0;
-                    window.style.transform = 'scale(0.9) translateY(10px)';
-                    setTimeout(() => {
-                        document.body.removeChild(window);
-                    }, 300);
-                }
-                setTimeout(() => {
-                    closeWindowsOneByOne(allWindows, index + 1, delay);
-                }, delay);
-            } else {
-                createFinalWindow();
+        // 游戏场景数据
+        const scenes = {
+            start: {
+                description: "你是法医白开水，在腐败横行的'暗影城'工作。今天，你接到一具身份特殊的尸体——市议员约翰·多伊。初步检查显示死因是心脏病发作，但你的直觉告诉你事情没那么简单。",
+                options: [
+                    { text: "进行常规尸检，按程序处理", nextScene: "routineAutopsy" },
+                    { text: "深入检查，寻找可疑痕迹", nextScene: "detailedAutopsy" },
+                    { text: "联系警方，表达你的疑虑", nextScene: "contactPolice" },
+                    { text: "直接联系媒体，公开你的怀疑", nextScene: "contactMedia" },
+                    { text: "私下调查议员背景", nextScene: "investigateBackground" }
+                ]
+            },
+            routineAutopsy: {
+                description: "你按照标准程序完成了尸检，报告显示自然死亡。但当你准备离开时，发现你的办公桌抽屉被人翻动过。",
+                options: [
+                    { text: "向上级报告异常情况", nextScene: "reportToSuperior" },
+                    { text: "私下调查谁动了你的东西", nextScene: "investigateOffice" },
+                    { text: "假装没发现，按时下班", nextScene: "goHomeEarly" },
+                    { text: "检查监控录像", nextScene: "checkSurveillance" }
+                ]
+            },
+            detailedAutopsy: {
+                description: "深入检查后，你发现议员体内有微量不明毒素。此时，你的主管打电话来，催促你尽快完成报告。",
+                options: [
+                    { text: "隐瞒发现，按自然死亡处理", nextScene: "coverUpFinding" },
+                    { text: "记录毒素发现，但暂不公开", nextScene: "recordFinding" },
+                    { text: "采集样本进行进一步分析", nextScene: "analyzeSample" },
+                    { text: "直接联系联邦调查局", nextScene: "contactFBI" }
+                ]
+            },
+            contactPolice: {
+                description: "你联系了警探米勒，但他似乎对你的怀疑不感兴趣，并暗示你不要多管闲事。",
+                options: [
+                    { text: "接受建议，放弃调查", nextScene: "giveUpInvestigation" },
+                    { text: "坚持要求重新调查", nextScene: "insistInvestigation" },
+                    { text: "询问米勒是否受到压力", nextScene: "questionMiller" },
+                    { text: "偷偷记录对话作为证据", nextScene: "recordConversation" },
+                    { text: "寻找警局内其他可信的警探", nextScene: "findHonestCop" }
+                ]
+            },
+            contactMedia: {
+                description: "你联系了当地记者莎拉，她对此非常感兴趣，但警告你这可能会让你陷入危险。",
+                options: [
+                    { text: "取消会面，放弃线索", nextScene: "cancelMeeting" },
+                    { text: "在公共场所与莎拉会面", nextScene: "publicMeeting" },
+                    { text: "在隐蔽地点与莎拉会面", nextScene: "secretMeeting" },
+                    { text: "要求莎拉提供更多保护", nextScene: "requestProtection" }
+                ]
+            },
+            // 修复的路径：私下调查议员背景
+            investigateBackground: {
+                description: "你开始调查议员的背景，发现他曾是反腐败运动的领导者，最近正在调查城市土地开发项目中的腐败问题。",
+                options: [
+                    { text: "深入调查土地开发项目", nextScene: "landDevelopment" },
+                    { text: "联系议员的助手", nextScene: "contactAide" },
+                    { text: "调查与议员有关的其他人", nextScene: "relatedPeople" },
+                    { text: "放弃这条线索", nextScene: "abandonLead" }
+                ]
+            },
+            landDevelopment: {
+                description: "你发现土地开发项目涉及市长和几个重要商人。项目资金流向不明，有巨大贪污嫌疑。",
+                options: [
+                    { text: "收集资金流向证据", nextScene: "moneyTrail" },
+                    { text: "联系项目举报人", nextScene: "contactWhistleblower" },
+                    { text: "深入调查涉及的商人", nextScene: "investigateBusinessmen" },
+                    { text: "将发现报告给上级", nextScene: "reportFindings" }
+                ]
+            },
+            moneyTrail: {
+                description: "你追踪到资金流向了海外账户，与市长家族有关。这是一项重大发现，但也极其危险。",
+                options: [
+                    { text: "继续追踪海外账户", nextScene: "overseasAccounts" },
+                    { text: "立即向联邦机构报告", nextScene: "reportToTreasury" },
+                    { text: "用这些信息勒索市长", nextScene: "blackmailWithEvidence" },
+                    { text: "暂时隐藏证据，等待时机", nextScene: "hideEvidence" }
+                ]
+            },
+            overseasAccounts: {
+                description: "你成功追踪到海外账户的具体信息，这是关键证据。现在你需要决定如何使用这些证据。",
+                options: [
+                    { text: "与国际反腐败组织合作", nextScene: "contactInternational" },
+                    { text: "将这些证据交给莎拉", nextScene: "giveToSarah" },
+                    { text: "利用证据威胁市长下台", nextScene: "threatenMayor" },
+                    { text: "将这些证据作为保险保存", nextScene: "keepAsInsurance" }
+                ]
+            },
+            contactInternational: {
+                description: "你联系了国际反腐败组织，他们非常重视你的案件，并提供了国际保护和支持。",
+                options: [
+                    { text: "接受国际组织的帮助", nextScene: "endingInternationalJustice" },
+                    { text: "要求国际媒体曝光", nextScene: "internationalMediaExposure" }
+                ]
+            },
+            // 修复的路径：要求莎拉提供更多保护
+            requestProtection: {
+                description: "莎拉介绍了你给一位前FBI特工，他现在是私人安保专家。他同意保护你，但需要你提供更多证据。",
+                options: [
+                    { text: "提供部分证据换取保护", nextScene: "partialEvidence" },
+                    { text: "提供所有证据完全信任他", nextScene: "fullEvidence" },
+                    { text: "拒绝提供更多证据", nextScene: "refuseEvidence" },
+                    { text: "怀疑他的动机，取消合作", nextScene: "doubtMotives" }
+                ]
+            },
+            partialEvidence: {
+                description: "你提供了部分证据，前FBI特工提供了基本保护。他建议你继续收集更多证据，同时保持低调。",
+                options: [
+                    { text: "继续深入调查", nextScene: "deepInvestigation" },
+                    { text: "暂时隐藏，等待时机", nextScene: "layLow" },
+                    { text: "寻找其他保护方式", nextScene: "findOtherProtection" }
+                ]
+            },
+            fullEvidence: {
+                description: "你提供了所有证据，前FBI特工非常重视，提供了全面保护。他告诉你这些证据足以启动联邦调查。",
+                options: [
+                    { text: "与联邦调查局合作", nextScene: "cooperateWithFBI" },
+                    { text: "继续独立调查", nextScene: "continueAlone" },
+                    { text: "利用证据推动公众觉醒", nextScene: "publicAwakening" }
+                ]
+            },
+            cooperateWithFBI: {
+                description: "你与联邦调查局合作，他们派出了一个特别调查组。在你的证据帮助下，他们开始秘密调查市长和腐败网络。",
+                options: [
+                    { text: "加入调查组提供专业支持", nextScene: "joinTaskForce" },
+                    { text: "保持距离，只提供证据", nextScene: "stayAtDistance" }
+                ]
+            },
+            joinTaskForce: {
+                description: "你加入了联邦调查局的特别调查组，利用你的专业知识和证据，调查取得了重大进展。",
+                options: [
+                    { text: "参与最终行动", nextScene: "finalOperation" },
+                    { text: "提供证据后退出", nextScene: "provideAndExit" }
+                ]
+            },
+            finalOperation: {
+                description: "你参与了联邦调查局的最终行动，成功逮捕了市长和多名腐败官员。腐败网络被彻底摧毁。",
+                options: [
+                    { text: "接受公众赞誉", nextScene: "endingPublicHero" },
+                    { text: "保持匿名，继续工作", nextScene: "endingQuietVictory" }
+                ]
+            },
+            publicAwakening: {
+                description: "你与莎拉合作，通过媒体逐步释放证据，引发了公众的广泛关注和愤怒。",
+                options: [
+                    { text: "组织市民抗议", nextScene: "organizeProtests" },
+                    { text: "推动立法改革", nextScene: "pushForReforms" }
+                ]
+            },
+            organizeProtests: {
+                description: "你成功组织了大规模市民抗议，要求彻查腐败案件。市长被迫成立独立调查委员会。",
+                options: [
+                    { text: "加入调查委员会", nextScene: "joinInvestigationCommittee" },
+                    { text: "继续领导抗议活动", nextScene: "leadProtests" }
+                ]
+            },
+            joinInvestigationCommittee: {
+                description: "你加入了独立调查委员会，利用你的专业知识和证据，推动了全面调查。",
+                options: [
+                    { text: "推动全面改革", nextScene: "endingComprehensiveReform" },
+                    { text: "确保责任人被起诉", nextScene: "endingJusticeServed" }
+                ]
+            },
+            // 新增场景：寻找警局内可信的警探
+            findHonestCop: {
+                description: "你找到了警探罗德里格斯，一位以正直著称的警官。她表示愿意帮助你，但警告你这会非常危险。",
+                options: [
+                    { text: "与罗德里格斯合作", nextScene: "cooperateWithRodriguez" },
+                    { text: "提供部分证据测试她的可信度", nextScene: "testRodriguez" },
+                    { text: "要求她提供保护", nextScene: "askRodriguezProtection" },
+                    { text: "寻找更多警局内的盟友", nextScene: "findMoreAllies" }
+                ]
+            },
+            cooperateWithRodriguez: {
+                description: "你与罗德里格斯建立了合作关系。她提供了警方的内部资源，帮助你深入调查腐败网络。",
+                options: [
+                    { text: "调查警局内部的腐败", nextScene: "investigatePoliceCorruption" },
+                    { text: "利用警方资源收集更多证据", nextScene: "usePoliceResources" },
+                    { text: "与罗德里格斯制定行动计划", nextScene: "planWithRodriguez" }
+                ]
+            },
+            planWithRodriguez: {
+                description: "你与罗德里格斯制定了周密的行动计划，准备一举揭露整个腐败网络。",
+                options: [
+                    { text: "执行计划，逮捕腐败分子", nextScene: "executePlan" },
+                    { text: "继续收集更多证据", nextScene: "collectMoreEvidence" }
+                ]
+            },
+            executePlan: {
+                description: "你与罗德里格斯成功执行了计划，逮捕了多名腐败官员，包括市长和警局高层。",
+                options: [
+                    { text: "公开所有证据", nextScene: "endingPublicHero" },
+                    { text: "保持低调，让司法系统处理", nextScene: "endingQuietVictory" }
+                ]
+            },
+            // 现有场景保持不变...
+            reportToSuperior: {
+                description: "你向主管报告了异常，但他表现得异常紧张，并建议你忘记这件事。",
+                options: [
+                    { text: "接受主管的建议", nextScene: "acceptAdvice" },
+                    { text: "追问主管为什么紧张", nextScene: "questionSuperior" },
+                    { text: "假装接受，但暗中调查", nextScene: "secretInvestigation" },
+                    { text: "威胁要向更高层报告", nextScene: "threatenSuperior" }
+                ]
+            },
+            investigateOffice: {
+                description: "你发现有人翻找了议员的档案。同事告诉你，有几个陌生人在你离开后进入了办公室。",
+                options: [
+                    { text: "询问同事更多细节", nextScene: "askColleague" },
+                    { text: "检查议员的档案", nextScene: "checkFiles" },
+                    { text: "安装隐藏摄像头", nextScene: "installCamera" },
+                    { text: "直接质问主管", nextScene: "confrontSuperior" }
+                ]
+            },
+            goHomeEarly: {
+                description: "你按时回家，但整晚都感到不安。第二天，你发现议员的尸体已经被火化，案件被关闭。",
+                options: [
+                    { text: "接受现实，继续工作", nextScene: "endingComplacency" },
+                    { text: "私下调查议员背景", nextScene: "investigateBackground" },
+                    { text: "联系议员家属", nextScene: "contactFamily" },
+                    { text: "辞职并离开城市", nextScene: "endingResign" }
+                ]
+            },
+            checkSurveillance: {
+                description: "监控显示两名身着西装的人在夜间进入了你的办公室。你认出其中一人是市长助理。",
+                options: [
+                    { text: "删除监控记录，保护自己", nextScene: "deleteFootage" },
+                    { text: "备份监控记录", nextScene: "backupFootage" },
+                    { text: "直接质问市长助理", nextScene: "confrontAssistant" },
+                    { text: "将证据交给信任的同事", nextScene: "shareEvidence" }
+                ]
+            },
+            coverUpFinding: {
+                description: "你隐瞒了毒素发现，案件以自然死亡结案。几周后，另一名反对派议员也突然死亡。",
+                options: [
+                    { text: "继续隐瞒，保全自己", nextScene: "endingComplacency" },
+                    { text: "重新检查第二名议员的尸体", nextScene: "reExamineBody" },
+                    { text: "匿名向媒体发送信息", nextScene: "anonymousTip" },
+                    { text: "联系联邦机构", nextScene: "contactFederal" }
+                ]
+            },
+            recordFinding: {
+                description: "你记录了毒素发现但未公开。当晚，有人试图闯入你的家。",
+                options: [
+                    { text: "销毁证据，停止调查", nextScene: "endingCowardice" },
+                    { text: "加强安全措施，继续调查", nextScene: "enhanceSecurity" },
+                    { text: "搬去朋友家暂住", nextScene: "stayWithFriend" },
+                    { text: "购买武器自卫", nextScene: "buyWeapon" }
+                ]
+            },
+            analyzeSample: {
+                description: "分析显示毒素是一种罕见神经毒剂，只有特定组织能够获得。你意识到自己卷入了一个大阴谋。",
+                options: [
+                    { text: "将样本交给警方", nextScene: "giveToPolice" },
+                    { text: "联系专业毒理学家", nextScene: "contactToxicologist" },
+                    { text: "保留样本，寻找更多证据", nextScene: "keepSample" },
+                    { text: "将样本寄给联邦调查局", nextScene: "mailToFBI" }
+                ]
+            },
+            contactFBI: {
+                description: "联邦调查局特工会见了你，但他们似乎已经被渗透，你的信息被泄露了。",
+                options: [
+                    { text: "接受FBI的保护", nextScene: "endingBetrayed" },
+                    { text: "逃跑并隐藏起来", nextScene: "goIntoHiding" },
+                    { text: "寻找地下抵抗组织", nextScene: "findResistance" },
+                    { text: "与腐败分子谈判", nextScene: "negotiateWithCorrupt" }
+                ]
+            },
+            giveUpInvestigation: {
+                description: "你放弃了调查，但内心的负罪感日益加重。几个月后，你被调到一个无关紧要的岗位。",
+                options: [
+                    { text: "接受新岗位", nextScene: "endingComplacency" },
+                    { text: "辞职离开", nextScene: "endingResign" },
+                    { text: "重新开始调查", nextScene: "restartInvestigation" }
+                ]
+            },
+            insistInvestigation: {
+                description: "你坚持要求重新调查，但被停职。现在你有更多时间，但也失去了官方资源。",
+                options: [
+                    { text: "利用停职时间深入调查", nextScene: "deepInvestigation" },
+                    { text: "寻求法律帮助恢复职位", nextScene: "legalHelp" },
+                    { text: "公开你的停职内幕", nextScene: "exposeSuspension" },
+                    { text: "放弃调查，享受假期", nextScene: "endingBurnout" }
+                ]
+            },
+            questionMiller: {
+                description: "你直接问米勒是否受到压力，他变得 defensive，并暗示你知道的越少越安全。",
+                options: [
+                    { text: "接受警告，停止追问", nextScene: "stopQuestioning" },
+                    { text: "记录他的反应作为证据", nextScene: "recordReaction" },
+                    { text: "威胁要揭露他的可疑行为", nextScene: "threatenMiller" },
+                    { text: "假装被说服，但暗中跟踪他", nextScene: "followMiller" }
+                ]
+            },
+            recordConversation: {
+                description: "你偷偷记录了与米勒的对话。分析录音时，你发现背景中有市长办公室的独特钟声。",
+                options: [
+                    { text: "删除录音，忘记一切", nextScene: "endingCowardice" },
+                    { text: "备份录音到多个地方", nextScene: "backupRecording" },
+                    { text: "用录音勒索米勒", nextScene: "blackmailMiller" },
+                    { text: "将录音交给记者莎拉", nextScene: "giveToSarah" }
+                ]
+            },
+            cancelMeeting: {
+                description: "你取消了与莎拉的会面，但几天后，你听说她遭遇了'意外'。",
+                options: [
+                    { text: "感到庆幸自己躲过一劫", nextScene: "endingCowardice" },
+                    { text: "因内疚而重新联系其他记者", nextScene: "contactOtherJournalist" },
+                    { text: "调查莎拉的'意外'", nextScene: "investigateAccident" },
+                    { text: "彻底放弃，申请调职", nextScene: "endingCareerRuined" }
+                ]
+            },
+            publicMeeting: {
+                description: "你在咖啡馆与莎拉会面，她提供了一些关于市长与犯罪集团联系的资料。",
+                options: [
+                    { text: "接受资料但不再深入", nextScene: "endingMissedOpportunity" },
+                    { text: "与莎拉合作调查", nextScene: "cooperateWithSarah" },
+                    { text: "复制资料后断绝联系", nextScene: "copyMaterials" },
+                    { text: "要求莎拉介绍她的消息源", nextScene: "meetSource" }
+                ]
+            },
+            secretMeeting: {
+                description: "你在隐蔽地点与莎拉会面，她透露市长与一个名为'暗影集团'的组织有关联。",
+                options: [
+                    { text: "接受信息但保持距离", nextScene: "endingMissedOpportunity" },
+                    { text: "加入莎拉的调查网络", nextScene: "joinNetwork" },
+                    { text: "利用信息为自己谋利", nextScene: "leverageInfo" },
+                    { text: "向市长告发莎拉", nextScene: "endingBetrayed" }
+                ]
+            },
+            keepSample: {
+                description: "你保留了毒素样本，这将成为关键证据。现在你需要决定下一步行动。",
+                options: [
+                    { text: "与莎拉合作调查", nextScene: "cooperateWithSarah" },
+                    { text: "独自继续调查", nextScene: "soloInvestigation" },
+                    { text: "寻找更多法医证据", nextScene: "moreForensicEvidence" },
+                    { text: "直接对抗腐败网络", nextScene: "directConfrontation" }
+                ]
+            },
+            cooperateWithSarah: {
+                description: "你与莎拉建立了合作关系。她告诉你，她有一个内线在市长办公室，可以为你提供关键信息。",
+                options: [
+                    { text: "要求会见内线", nextScene: "meetSource" },
+                    { text: "要求莎拉提供更多保护", nextScene: "moreProtection" },
+                    { text: "分享你已有的证据", nextScene: "shareEvidenceWithSarah" },
+                    { text: "保持距离，只交换基本信息", nextScene: "keepDistance" }
+                ]
+            },
+            meetSource: {
+                description: "你见到了莎拉的内线——市长办公室的助理秘书。她愿意提供信息，但要求绝对保密。",
+                options: [
+                    { text: "承诺保密并获取信息", nextScene: "getInfo" },
+                    { text: "记录会面作为证据", nextScene: "recordMeeting" },
+                    { text: "要求更多实质性证据", nextScene: "requestSolidEvidence" },
+                    { text: "拒绝合作，担心安全", nextScene: "refuseCooperation" }
+                ]
+            },
+            getInfo: {
+                description: "内线提供了关键信息：市长与一个名为'暗影集团'的犯罪组织有密切联系，议员的死是因为他发现了一项重大腐败计划。",
+                options: [
+                    { text: "用录音勒索米勒", nextScene: "blackmailMiller" },
+                    { text: "将这些信息与莎拉分享", nextScene: "shareWithSarah" },
+                    { text: "立即向联邦调查局报告", nextScene: "reportToFBI" },
+                    { text: "直接对抗市长", nextScene: "confrontMayorDirectly" }
+                ]
+            },
+            shareWithSarah: {
+                description: "你与莎拉分享了所有信息，她非常震惊。她告诉你，她认识一位正直的联邦调查局特工，可以信任。你们决定一起行动。",
+                options: [
+                    { text: "继续收集更多证据", nextScene: "deepInvestigation" },
+                    { text: "立即向这位特工求助", nextScene: "contactHonestAgent" }
+                ]
+            },
+            blackmailMiller: {
+                description: "你成功勒索了警探米勒，他被迫提供了市长与犯罪集团会面的照片。这是关键证据！",
+                options: [
+                    { text: "利用这些证据深入调查", nextScene: "deepInvestigation" },
+                    { text: "立即公开这些证据", nextScene: "publishEvidence" },
+                    { text: "用这些证据勒索市长", nextScene: "blackmailMayor" },
+                    { text: "将这些证据交给联邦调查局", nextScene: "giveToFBI" }
+                ]
+            },
+            deepInvestigation: {
+                description: "通过深入调查，你获得了市长与犯罪集团交易的银行记录。这是决定性证据！",
+                options: [
+                    { text: "收集所有证据准备最终行动", nextScene: "prepareFinalAction" },
+                    { text: "立即向媒体曝光", nextScene: "exposeToMedia" },
+                    { text: "联系正直的联邦特工", nextScene: "contactHonestAgent" },
+                    { text: "亲自面对市长", nextScene: "faceMayor" }
+                ]
+            },
+            contactHonestAgent: {
+                description: "你联系了莎拉推荐的联邦特工。他非常重视你的证据，并制定了周密的计划来揭露腐败网络。",
+                options: [
+                    { text: "将所有证据交给他", nextScene: "endingHiddenVictory" },
+                    { text: "保留部分关键证据作为保险", nextScene: "keepSomeEvidence" }
+                ]
+            },
+            prepareFinalAction: {
+                description: "你已经收集了所有必要证据：毒素样本、会面照片、银行记录。现在是时候采取最终行动了。",
+                options: [
+                    { text: "通过莎拉向全国媒体曝光", nextScene: "endingExposure" },
+                    { text: "联系正直的联邦特工", nextScene: "contactHonestAgent" },
+                    { text: "亲自与市长对峙", nextScene: "confrontMayor" },
+                    { text: "将证据交给当地检察官", nextScene: "giveToProsecutor" }
+                ]
+            },
+            // 结局场景
+            endingComplacency: {
+                description: "你选择了顺从，继续在体制内工作。腐败依旧，而你成为了系统的一部分。虽然安全，但每晚你都带着愧疚入睡。",
+                title: "平庸的妥协"
+            },
+            endingResign: {
+                description: "你辞去了工作，离开了暗影城。在新的城市开始了新生活，但过去的阴影始终伴随着你。",
+                title: "逃避的代价"
+            },
+            endingCorruptionWin: {
+                description: "你的调查引起了腐败网络的注意。一天晚上，你在回家路上遭遇'意外'。官方报告称是抢劫案，但知情人都明白真相。",
+                title: "沉默的证人"
+            },
+            endingExposure: {
+                description: "通过铤而走险的调查，你收集到了足够证据并成功曝光了整个腐败网络。市长和多名官员被捕，城市开始了改革。你成为了英雄，但永远改变了。",
+                title: "光明的代价"
+            },
+            endingHiddenVictory: {
+                description: "你找到了隐藏的证据——市长与犯罪集团的交易记录。通过巧妙的操作，你将这些证据交给了联邦调查局正直的特工，腐败网络被一网打尽。你没有成为公众英雄，但你知道自己做了正确的事，而且幸存了下来。",
+                title: "隐藏的胜利"
+            },
+            endingBetrayed: {
+                description: "你信任了错误的人，你的证据被销毁，你被诬陷为腐败分子。在监狱中，你反思着自己的天真。",
+                title: "被背叛的正义"
+            },
+            endingDisappeared: {
+                description: "你的调查太过明显，引起了腐败网络的警觉。一天，你突然消失了，没有人知道发生了什么。",
+                title: "消失的调查员"
+            },
+            endingFamilyThreat: {
+                description: "腐败分子威胁到了你的家人，你不得不放弃调查以保护他们。你永远无法原谅自己的妥协。",
+                title: "家庭的代价"
+            },
+            endingFramed: {
+                description: "腐败网络精心策划了一场陷害，你被指控受贿和渎职。你的职业生涯结束了，而真正的罪犯依然逍遥法外。",
+                title: "被陷害的清白"
+            },
+            endingBurnout: {
+                description: "长期的调查压力和恐惧使你身心俱疲，你最终精神崩溃，被送进精神病院。真相随着你的理智一同消失了。",
+                title: "崩溃的意志"
+            },
+            endingPublicHumiliation: {
+                description: "腐败分子在媒体上散布关于你的虚假丑闻，你的声誉被彻底摧毁。没有人再相信你的调查结果。",
+                title: "公众羞辱"
+            },
+            endingForcedExile: {
+                description: "面对生命威胁，你被迫离开国家，在异国他乡度过余生，永远无法回到家乡。",
+                title: "被迫流亡"
+            },
+            endingCareerRuined: {
+                description: "你的调查导致你失去了工作执照，职业生涯彻底结束。你只能从事低薪工作，度过平凡而遗憾的一生。",
+                title: "职业生涯的终结"
+            },
+            endingLostEverything: {
+                description: "在调查过程中，你失去了工作、家庭和朋友。最终你一无所有，在街头度过余生。",
+                title: "失去一切"
+            },
+            endingBecomeCorrupt: {
+                description: "在对抗腐败的过程中，你逐渐被体制同化，最终成为了你曾经对抗的那种人。",
+                title: "成为腐败者"
+            },
+            endingAccidentalDeath: {
+                description: "你的调查导致了一系列连锁反应，最终在一场看似意外的事故中丧生。",
+                title: "意外死亡"
+            },
+            // 新增坏结局
+            endingCowardice: {
+                description: "你因为恐惧而放弃了调查，腐败继续蔓延。你余生都在自责中度过，知道本可以改变一切。",
+                title: "懦夫的悔恨"
+            },
+            endingMissedOpportunity: {
+                description: "你错过了关键线索，腐败网络得以继续存在。多年后，当真相大白时，你意识到自己本可以阻止这一切。",
+                title: "错失的机会"
+            },
+            endingTrapped: {
+                description: "你陷入了腐败分子设置的陷阱，无法脱身。最终你被迫成为他们的一员，永远失去了自我。",
+                title: "陷入泥潭"
+            },
+            endingBrokenSpirit: {
+                description: "连续的挫折和威胁击垮了你的意志，你放弃了所有希望，成为了一个行尸走肉。",
+                title: "破碎的灵魂"
+            },
+            endingDiscredited: {
+                description: "腐败分子成功抹黑你的声誉，没有人相信你的调查结果。你的职业生涯和个人生活都彻底毁坏。",
+                title: "信誉扫地"
+            },
+            endingIsolated: {
+                description: "你的调查使你失去了所有朋友和支持者，最终在孤独中结束了自己的生命。",
+                title: "孤独的终结"
+            },
+            endingFalseHope: {
+                description: "你以为找到了关键证据，但最终发现那只是腐败分子设置的诱饵。你的调查彻底失败。",
+                title: "虚假的希望"
+            },
+            endingCompromised: {
+                description: "你的调查方法过于激进，违反了法律和道德底线。最终你被起诉，而腐败分子却逃脱了惩罚。",
+                title: "妥协的原则"
+            },
+            endingBetrayal: {
+                description: "你最信任的盟友背叛了你，将你的所有证据交给了腐败分子。你失去了所有筹码。",
+                title: "彻底的背叛"
+            },
+            endingSystemVictory: {
+                description: "尽管你收集了大量证据，但腐败系统依然强大，你的努力最终被体制吸收和消解。",
+                title: "系统的胜利"
+            },
+            // 新增好结局
+            endingInternationalJustice: {
+                description: "在国际组织的支持下，你的证据被提交给国际法庭。市长及其同伙被起诉，案件成为国际反腐败的典范。你受邀加入国际反腐败组织，继续在全球范围内打击腐败。",
+                title: "国际正义"
+            },
+            endingPublicHero: {
+                description: "你接受了公众的赞誉，成为了反腐败的象征。你的勇气激励了更多人站出来对抗腐败。",
+                title: "公众英雄"
+            },
+            endingQuietVictory: {
+                description: "你选择了保持匿名，继续你的法医工作。你知道自己做了正确的事，这就足够了。",
+                title: "安静的胜利"
+            },
+            endingComprehensiveReform: {
+                description: "你推动了全面的政府改革，建立了更加透明和公正的制度。城市开始了真正的变革。",
+                title: "全面改革"
+            },
+            endingJusticeServed: {
+                description: "所有腐败分子都被起诉并定罪，正义得到了伸张。城市开始了新生。",
+                title: "正义得到伸张"
             }
+        };
+
+        // 初始化游戏
+        function initGame() {
+            gameState.currentScene = "start";
+            gameState.evidenceCollected = 0;
+            gameState.corruptionAwareness = 0;
+            gameState.riskLevel = 0;
+            gameState.choices = [];
+            gameState.hasHiddenEvidence = false;
+            gameState.hasMetInformant = false;
+            gameState.hasBetrayedPolice = false;
+            gameState.hasCorruptionProof = false;
+            gameState.allies = [];
+            gameState.enemies = [];
+            gameState.moralChoices = 0;
+            gameState.reputation = 50;
+            gameState.hasMetWhistleblower = false;
+            gameState.hasFinancialEvidence = false;
+            gameState.hasWitnessProtection = false;
+            gameState.hasPoliticalSupport = false;
+            gameState.hasMediaAllies = false;
+            gameState.hasLegalBackup = false;
+            gameState.hasTrustedAgent = false;
+            
+            updateStats();
+            showIntro();
         }
 
-        // 最终弹窗（不变）
-        function createFinalWindow() {
-            const finalWindow = document.createElement('div');
-            finalWindow.className = 'final-window';
-            finalWindow.textContent = '我想你了，还不给我发信息嘛～';
-            document.body.appendChild(finalWindow);
-            setTimeout(() => {
-                finalWindow.classList.add('show');
-            }, 100);
+        // 显示介绍
+        function showIntro() {
+            document.getElementById("intro-container").classList.remove("hidden");
+            document.getElementById("scene-container").classList.add("hidden");
+            document.getElementById("ending-container").classList.add("hidden");
         }
 
-        // 主逻辑（不变，保持慢节奏生成）
-        async function main() {
-            const allWindows = [];
-            const totalWindows = 200;
-            const initialDelay = 80; // 生成速度不变，慢节奏
-            const minDelay = 8;
-            const speedStep = 25;
-            const delayReduce = 1;
-
-            for (let i = 0; i < totalWindows; i++) {
-                const win = createTipWindow();
-                allWindows.push(win);
+        // 显示场景
+        function showScene(sceneId) {
+            const scene = scenes[sceneId];
+            
+            if (!scene) {
+                console.error("场景不存在:", sceneId);
+                showScene("endingCorruptionWin");
+                return;
+            }
+            
+            const sceneDescription = document.getElementById("scene-description");
+            const optionsContainer = document.getElementById("options-container");
+            
+            // 检查是否是结局场景
+            if (sceneId.startsWith("ending") || !scene.options) {
+                document.getElementById("scene-container").classList.add("hidden");
+                document.getElementById("ending-container").classList.remove("hidden");
                 
-                const currentDelay = Math.max(
-                    initialDelay - Math.floor(i / speedStep) * delayReduce,
-                    minDelay
-                );
-                await awaitTimeout(currentDelay);
+                document.getElementById("ending-title").textContent = scene.title || "游戏结束";
+                document.getElementById("ending-description").textContent = scene.description;
+                
+                // 添加结局类型样式
+                if (sceneId === "endingHiddenVictory" || sceneId === "endingExposure" || 
+                    sceneId === "endingInternationalJustice" || sceneId === "endingPublicHero" ||
+                    sceneId === "endingQuietVictory" || sceneId === "endingComprehensiveReform" ||
+                    sceneId === "endingJusticeServed") {
+                    document.getElementById("ending-title").className = "ending-title good-ending";
+                    document.getElementById("ending-description").innerHTML += 
+                        '<div class="achievement">恭喜！您成功揭露了腐败网络，达成了胜利结局！</div>';
+                } else {
+                    document.getElementById("ending-title").className = "ending-title bad-ending";
+                    document.getElementById("ending-description").innerHTML += 
+                        '<div class="achievement">不幸的是，您未能揭露真相。腐败继续蔓延...</div>';
+                }
+                
+                return;
             }
-
-            // 弹窗生成后等待3秒关闭（比之前缩短1秒，更快进入关闭阶段）
-            setTimeout(() => {
-                closeWindowsOneByOne(allWindows);
-            }, 3000);
+            
+            // 更新界面显示
+            document.getElementById("intro-container").classList.add("hidden");
+            document.getElementById("scene-container").classList.remove("hidden");
+            document.getElementById("ending-container").classList.add("hidden");
+            
+            // 更新场景描述
+            sceneDescription.textContent = scene.description;
+            
+            // 检查成就
+            let achievementText = "";
+            if (sceneId === "keepSample" && !gameState.hasHiddenEvidence) {
+                gameState.hasHiddenEvidence = true;
+                achievementText = "成就：获得隐藏证据！";
+            } else if (sceneId === "meetSource" && !gameState.hasMetInformant) {
+                gameState.hasMetInformant = true;
+                achievementText = "成就：会见关键线人！";
+            } else if (sceneId === "blackmailMiller" && !gameState.hasBetrayedPolice) {
+                gameState.hasBetrayedPolice = true;
+                achievementText = "成就：背叛腐败警方！";
+            } else if (sceneId === "deepInvestigation" && !gameState.hasCorruptionProof) {
+                gameState.hasCorruptionProof = true;
+                achievementText = "成就：获得腐败直接证据！";
+            } else if (sceneId === "contactWhistleblower" && !gameState.hasMetWhistleblower) {
+                gameState.hasMetWhistleblower = true;
+                achievementText = "成就：联系内部举报人！";
+            } else if (sceneId === "moneyTrail" && !gameState.hasFinancialEvidence) {
+                gameState.hasFinancialEvidence = true;
+                achievementText = "成就：获得财务证据！";
+            } else if (sceneId === "requestProtection" && !gameState.hasWitnessProtection) {
+                gameState.hasWitnessProtection = true;
+                achievementText = "成就：获得证人保护！";
+            } else if (sceneId === "organizeProtests" && !gameState.hasPoliticalSupport) {
+                gameState.hasPoliticalSupport = true;
+                achievementText = "成就：获得政治支持！";
+            } else if (sceneId === "publicMeeting" && !gameState.hasMediaAllies) {
+                gameState.hasMediaAllies = true;
+                achievementText = "成就：获得媒体盟友！";
+            } else if (sceneId === "cooperateWithFBI" && !gameState.hasLegalBackup) {
+                gameState.hasLegalBackup = true;
+                achievementText = "成就：获得法律支持！";
+            } else if (sceneId === "contactHonestAgent" && !gameState.hasTrustedAgent) {
+                gameState.hasTrustedAgent = true;
+                achievementText = "成就：找到可信的联邦特工！";
+            }
+            
+            if (achievementText) {
+                sceneDescription.innerHTML += `<div class="achievement">${achievementText}</div>`;
+            }
+            
+            // 添加提示
+            if (gameState.riskLevel > 10 && Math.random() > 0.5) {
+                sceneDescription.innerHTML += `<div class="hint">提示：你的行动已经引起了注意，小心行事！</div>`;
+            }
+            
+            // 清空选项容器
+            optionsContainer.innerHTML = "";
+            
+            // 添加选项按钮
+            scene.options.forEach(option => {
+                const button = document.createElement("button");
+                button.className = "option-btn";
+                button.textContent = option.text;
+                
+                button.addEventListener("click", () => {
+                    // 记录选择
+                    gameState.choices.push(option.text);
+                    
+                    // 更新游戏状态
+                    updateGameState(option, sceneId);
+                    
+                    // 检查隐藏条件
+                    checkHiddenConditions(option, sceneId);
+                    
+                    // 随机失败结局检查
+                    if (!checkRandomFailure()) {
+                        // 更新统计
+                        updateStats();
+                        
+                        // 进入下一个场景
+                        showScene(option.nextScene);
+                    }
+                });
+                
+                optionsContainer.appendChild(button);
+            });
         }
 
-        // 延迟辅助函数（不变）
-        function awaitTimeout(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
+        // 更新游戏状态
+        function updateGameState(option, sceneId) {
+            // 根据选项增加风险
+            if (sceneId === "contactMedia" && option.text === "直接联系媒体，公开你的怀疑") {
+                gameState.riskLevel += 3;
+                gameState.evidenceCollected += 1;
+                gameState.corruptionAwareness += 15;
+            } else if (sceneId === "contactFBI" && option.text === "直接联系联邦调查局") {
+                gameState.riskLevel += 4;
+                gameState.evidenceCollected += 1;
+                gameState.corruptionAwareness += 20;
+            } else if (option.text.includes("威胁") || option.text.includes("勒索") || 
+                      option.text.includes("告发") || option.text.includes("对抗")) {
+                gameState.riskLevel += 2;
+                gameState.evidenceCollected = Math.min(7, gameState.evidenceCollected + 1);
+                gameState.corruptionAwareness += 10;
+            } else if (option.text.includes("暗中") || option.text.includes("秘密") || 
+                      option.text.includes("隐藏") || option.text.includes("跟踪")) {
+                gameState.riskLevel += 1;
+                gameState.evidenceCollected = Math.min(7, gameState.evidenceCollected + 1);
+                gameState.corruptionAwareness += 5;
+            } else if (option.text.includes("深入") || option.text.includes("进一步") || 
+                      option.text.includes("分析") || option.text.includes("调查")) {
+                gameState.riskLevel += 1;
+                gameState.evidenceCollected = Math.min(7, gameState.evidenceCollected + 1);
+                gameState.corruptionAwareness += 5;
+            }
+            
+            // 安全选项减少风险但几乎不增加证据和认知
+            if (option.text.includes("放弃") || option.text.includes("接受") || 
+                option.text.includes("停止") || option.text.includes("忘记")) {
+                gameState.riskLevel = Math.max(0, gameState.riskLevel - 1);
+                if (Math.random() > 0.8) {
+                    gameState.evidenceCollected = Math.min(7, gameState.evidenceCollected + 1);
+                }
+                gameState.corruptionAwareness += 2;
+            }
+            
+            // 道德选择记录
+            if (option.text.includes("贿赂") || option.text.includes("勒索") || option.text.includes("背叛")) {
+                gameState.moralChoices++;
+            }
+            
+            // 声誉系统
+            if (option.text.includes("公开") || option.text.includes("曝光") || option.text.includes("举报")) {
+                gameState.reputation += 5;
+            } else if (option.text.includes("隐瞒") || option.text.includes("妥协") || option.text.includes("放弃")) {
+                gameState.reputation -= 5;
+            }
         }
 
-        // 开场点击触发（不变）
-        const openingScreen = document.getElementById('openingScreen');
-        openingScreen.addEventListener('click', (e) => {
-            const ripple = document.createElement('div');
-            ripple.className = 'ripple';
-            const x = e.clientX - ripple.offsetWidth / 2;
-            const y = e.clientY - ripple.offsetHeight / 2;
-            ripple.style.left = `${x}px`;
-            ripple.style.top = `${y}px`;
-            openingScreen.appendChild(ripple);
+        // 随机失败结局检查
+        function checkRandomFailure() {
+            // 高风险时有一定几率触发失败结局
+            if (gameState.riskLevel > 15 && Math.random() > 0.7) {
+                const failures = [
+                    "endingCorruptionWin", "endingDisappeared", "endingFramed", 
+                    "endingAccidentalDeath", "endingPublicHumiliation", "endingTrapped",
+                    "endingDiscredited", "endingBetrayal", "endingCareerRuined",
+                    "endingLostEverything", "endingBecomeCorrupt", "endingCowardice"
+                ];
+                const randomFailure = failures[Math.floor(Math.random() * failures.length)];
+                showScene(randomFailure);
+                return true;
+            }
+            
+            // 过多道德妥协可能导致失败
+            if (gameState.moralChoices > 3 && Math.random() > 0.6) {
+                showScene("endingBetrayed");
+                return true;
+            }
+            
+            // 声誉过低可能导致失败
+            if (gameState.reputation < 20 && Math.random() > 0.7) {
+                showScene("endingCareerRuined");
+                return true;
+            }
+            
+            return false;
+        }
 
-            openingScreen.style.opacity = 0;
-            setTimeout(() => {
-                openingScreen.remove();
-                main();
-            }, 600);
+        // 更新游戏统计
+        function updateStats() {
+            document.getElementById("evidence-count").textContent = `${gameState.evidenceCollected}/7`;
+            document.getElementById("corruption-awareness").textContent = `${gameState.corruptionAwareness}%`;
+            
+            let riskText = "低";
+            if (gameState.riskLevel > 15) riskText = "极高";
+            else if (gameState.riskLevel > 10) riskText = "高";
+            else if (gameState.riskLevel > 5) riskText = "中";
+            
+            document.getElementById("risk-level").textContent = riskText;
+        }
+
+        // 检查隐藏胜利条件
+        function checkHiddenConditions(option, sceneId) {
+            // 收集隐藏证据
+            if (sceneId === "analyzeSample" && option.text === "保留样本，寻找更多证据") {
+                gameState.hasHiddenEvidence = true;
+            }
+            
+            // 会见线人
+            if (sceneId === "meetSource" && option.text === "承诺保密并获取信息") {
+                gameState.hasMetInformant = true;
+            }
+            
+            // 背叛警方
+            if (sceneId === "getInfo" && option.text === "用录音勒索米勒") {
+                gameState.hasBetrayedPolice = true;
+            }
+            
+            // 获得腐败证据
+            if (sceneId === "deepInvestigation") {
+                gameState.hasCorruptionProof = true;
+            }
+            
+            // 找到可信的联邦特工
+            if (sceneId === "contactHonestAgent") {
+                gameState.hasTrustedAgent = true;
+            }
+            
+            // 检查是否达成隐藏胜利
+            if (gameState.hasHiddenEvidence && gameState.hasMetInformant && 
+                gameState.hasBetrayedPolice && gameState.hasCorruptionProof && 
+                gameState.corruptionAwareness >= 80 && gameState.evidenceCollected >= 5) {
+                // 在准备最终行动时进入隐藏胜利
+                if (sceneId === "prepareFinalAction" && option.text === "联系正直的联邦特工") {
+                    showScene("endingHiddenVictory");
+                }
+            }
+            
+            // 检查是否达成国际正义结局
+            if (gameState.hasFinancialEvidence && gameState.hasWitnessProtection && 
+                gameState.corruptionAwareness >= 70 && gameState.evidenceCollected >= 6) {
+                if (sceneId === "contactInternational" && option.text === "接受国际组织的帮助") {
+                    showScene("endingInternationalJustice");
+                }
+            }
+            
+            // 检查是否达成公众英雄结局
+            if (gameState.hasPoliticalSupport && gameState.hasMediaAllies && 
+                gameState.corruptionAwareness >= 75 && gameState.reputation >= 70) {
+                if (sceneId === "finalOperation" && option.text === "接受公众赞誉") {
+                    showScene("endingPublicHero");
+                }
+            }
+            
+            // 检查是否达成全面改革结局
+            if (gameState.hasPoliticalSupport && gameState.hasMediaAllies && 
+                gameState.corruptionAwareness >= 75 && gameState.reputation >= 70) {
+                if (sceneId === "joinInvestigationCommittee" && option.text === "推动全面改革") {
+                    showScene("endingComprehensiveReform");
+                }
+            }
+            
+            // 检查是否达成正义得到伸张结局
+            if (gameState.hasPoliticalSupport && gameState.hasMediaAllies && 
+                gameState.corruptionAwareness >= 75 && gameState.reputation >= 70) {
+                if (sceneId === "joinInvestigationCommittee" && option.text === "确保责任人被起诉") {
+                    showScene("endingJusticeServed");
+                }
+            }
+            
+            // 检查是否达成安静的胜利结局
+            if (gameState.hasTrustedAgent && gameState.hasLegalBackup && 
+                gameState.corruptionAwareness >= 70 && gameState.evidenceCollected >= 5) {
+                if (sceneId === "finalOperation" && option.text === "保持匿名，继续工作") {
+                    showScene("endingQuietVictory");
+                }
+            }
+        }
+
+        // 重新开始游戏
+        document.getElementById("restart-btn").addEventListener("click", initGame);
+        
+        // 开始游戏按钮
+        document.getElementById("start-btn").addEventListener("click", () => {
+            showScene("start");
         });
+
+        // 初始化游戏
+        window.onload = initGame;
     </script>
 </body>
 </html>
